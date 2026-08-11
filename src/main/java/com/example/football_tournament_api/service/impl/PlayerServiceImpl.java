@@ -34,7 +34,7 @@ public class PlayerServiceImpl implements PlayerService {
             throw new AlreadyExistsException("This name already exists: " + request.name());
         }
         if (!teamRepository.existsById(request.teamId())) {
-            throw new ResourceNotFoundException("This team does not exists");
+            throw new ResourceNotFoundException("This team not found");
         }
         Team teamProxy = teamRepository.getReferenceById(request.teamId());
 
@@ -47,6 +47,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    @Transactional
     public List<PlayerResponse> getAll() {
         List<Player> players = playerRepository.findAll();
         List<PlayerResponse> responseList = playerMapper.toResponselist(players);
@@ -76,7 +77,7 @@ public class PlayerServiceImpl implements PlayerService {
         }
 
 
-        playerMapper.updateEntityFromDto(request, player);
+        playerMapper.updateEntityFromRequest(request, player);
         player.setUpdatedAt(LocalDateTime.now());
         playerRepository.save(player);
         PlayerResponse response = playerMapper.toPlayerResponse(player);

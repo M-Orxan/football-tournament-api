@@ -7,6 +7,7 @@ public record PlayerResponse(
         String name,
         boolean deleted,
         Integer teamId,
+        String teamName,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime deletedAt
