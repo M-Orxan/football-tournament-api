@@ -1,39 +1,43 @@
 package com.example.football_tournament_api.mapper;
 
-import com.example.football_tournament_api.dto.player.PlayerCreateRequest;
-import com.example.football_tournament_api.dto.player.PlayerResponse;
+
 import com.example.football_tournament_api.dto.player.PlayerUpdateRequest;
+import com.example.football_tournament_api.dto.team.TeamCreateRequest;
+import com.example.football_tournament_api.dto.team.TeamResponse;
+import com.example.football_tournament_api.dto.team.TeamUpdateRequest;
 import com.example.football_tournament_api.entity.Player;
+import com.example.football_tournament_api.entity.Team;
 import org.mapstruct.*;
 
 import java.util.List;
 
-
 @Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.ERROR)
-public interface PlayerMapper {
+public interface TeamMapper {
+
+
+
+@Mapping(target = "playerCount",ignore = true)
+ TeamResponse toResponse(Team team);
+ List<TeamResponse> toResponseList(List<Team> teams);
 
     @Mapping(target = "id",ignore = true)
     @Mapping(target = "deleted",ignore = true)
     @Mapping(target = "deletedAt",ignore = true)
     @Mapping(target = "createdAt",ignore = true)
     @Mapping(target = "updatedAt",ignore = true)
-    @Mapping(target = "team",ignore = true)
-    Player toPlayer(PlayerCreateRequest request);
+    @Mapping(target = "players",ignore = true)
+    Team toTeam(TeamCreateRequest request);
 
-    @Mapping(target = "teamId", source = "team.id")
-    @Mapping(target = "teamName", source = "team.name")
-    PlayerResponse toPlayerResponse(Player player);
-
-
-    List<PlayerResponse> toResponselist(List<Player> players);
 
     @Mapping(target = "id",ignore = true)
     @Mapping(target = "deleted",ignore = true)
     @Mapping(target = "deletedAt",ignore = true)
     @Mapping(target = "updatedAt",ignore = true)
     @Mapping(target = "createdAt",ignore = true)
-    @Mapping(target = "team",ignore = true)
-    @BeanMapping(nullValuePropertyMappingStrategy=NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromRequest(PlayerUpdateRequest dto, @MappingTarget Player player);
+    @Mapping(target = "players",ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy= NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntityFromRequest(TeamUpdateRequest request, @MappingTarget Team team);
+
+
 
 }
