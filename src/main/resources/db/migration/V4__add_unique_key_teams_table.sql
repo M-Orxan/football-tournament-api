@@ -1,0 +1,1 @@
+ALTER TABLE teams ADD CONSTRAINT uk_teams_head_coach UNIQUE (head_coach_id);

@@ -33,14 +33,14 @@ public class PlayerServiceImpl implements PlayerService {
         if (playerRepository.existsByName(request.name())) {
             throw new AlreadyExistsException("This name already exists: " + request.name());
         }
-        if (!teamRepository.existsById(request.teamId())) {
-            throw new ResourceNotFoundException("This team not found");
-        }
-        Team teamProxy = teamRepository.getReferenceById(request.teamId());
+
+        Team team=teamRepository.findById(request.teamId())
+                .orElseThrow(()->new ResourceNotFoundException("This team not found"));
+
 
         Player player = playerMapper.toPlayer(request);
         player.setCreatedAt(LocalDateTime.now());
-        player.setTeam(teamProxy);
+        player.setTeam(team);
         Player savedPlayer = playerRepository.save(player);
         PlayerResponse response = playerMapper.toPlayerResponse(savedPlayer);
         return response;
@@ -67,7 +67,7 @@ public class PlayerServiceImpl implements PlayerService {
 
         if (request.teamId() != null) {
             if (!teamRepository.existsById(request.teamId())) {
-                throw new ResourceNotFoundException("This team does not exists");
+                throw new ResourceNotFoundException("Team not found");
             }
         }
 

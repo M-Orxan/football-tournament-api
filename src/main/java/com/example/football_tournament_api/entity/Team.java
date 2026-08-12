@@ -1,10 +1,7 @@
 package com.example.football_tournament_api.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -27,6 +24,10 @@ public class Team extends BaseEntity {
 
     @OneToMany(mappedBy = "team")
     private List<Player> players=new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "head_coach_id")
+    private HeadCoach headCoach;
 
     public void addPlayer(Player player){
         players.add(player);

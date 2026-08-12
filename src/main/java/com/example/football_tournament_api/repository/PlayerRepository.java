@@ -15,7 +15,6 @@ public interface PlayerRepository extends JpaRepository<Player,Integer>
     boolean existsByName(String name);
 
     @Modifying(clearAutomatically = true)
-
     @Query("Update Player p set p.team.id=null where p.team.id=:teamId")
-    void unassignPlayersFromTeam(@Param("teamId")Integer teamId);
+    void unassignPlayersFromTeam(@Param("teamId")Integer teamId);//komandani sof delete sildikden sonra
 }
