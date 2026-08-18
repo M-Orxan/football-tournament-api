@@ -27,6 +27,7 @@ public interface TeamRepository extends JpaRepository<Team,Integer> {
                 t.createdAt   
         )
         FROM Team t 
+            Left join t.headCoach hc
         LEFT JOIN t.players p
         WHERE t.id = :id
         GROUP BY t.id, t.name,t.headCoach.id,t.headCoach.name, t.createdAt
@@ -38,15 +39,15 @@ public interface TeamRepository extends JpaRepository<Team,Integer> {
         SELECT new com.example.football_tournament_api.dto.team.TeamResponse(
             t.id, 
             t.name, 
-                t.headCoach.id,
-                    t.headCoach.name,
+                hc.id,
+                    hc.name,
             COUNT(p.id),
              t.createdAt
-                
         )
         FROM Team t 
         LEFT JOIN t.players p
-        GROUP BY t.id, t.name,t.headCoach.id,t.headCoach.name,t.createdAt
+              left join t.headCoach hc
+        GROUP BY t.id, t.name,hc.id,hc.name,t.createdAt
     """)
     List<TeamResponse> findTeamsWithPlayerCount();
 
@@ -56,4 +57,10 @@ public interface TeamRepository extends JpaRepository<Team,Integer> {
     @Modifying
     @Query("Update Team t set t.headCoach.id=null where t.headCoach.id=:headCoachId")
     void unAssignTeamFromHeadCoach(@Param("headCoachId") Integer headCoachId);//head coach soft delete edildikden sonra
+
+
+
+
+
+
 }

@@ -1,11 +1,9 @@
 package com.example.football_tournament_api.mapper;
 
 
-import com.example.football_tournament_api.dto.player.PlayerUpdateRequest;
 import com.example.football_tournament_api.dto.team.TeamCreateRequest;
 import com.example.football_tournament_api.dto.team.TeamResponse;
 import com.example.football_tournament_api.dto.team.TeamUpdateRequest;
-import com.example.football_tournament_api.entity.Player;
 import com.example.football_tournament_api.entity.Team;
 import org.mapstruct.*;
 
@@ -20,6 +18,7 @@ public interface TeamMapper {
  @Mapping(target = "headCoachId",source = "team.headCoach.id")
  @Mapping(target = "headCoachName",source = "team.headCoach.name")
  TeamResponse toResponse(Team team);
+
  List<TeamResponse> toResponseList(List<Team> teams);
 
     @Mapping(target = "id",ignore = true)
@@ -29,6 +28,7 @@ public interface TeamMapper {
     @Mapping(target = "updatedAt",ignore = true)
     @Mapping(target = "headCoach",ignore = true)
     @Mapping(target = "players",ignore = true)
+    @Mapping(target = "tournamentTeam",ignore = true)
     Team toTeam(TeamCreateRequest request);
 
 
@@ -39,8 +39,13 @@ public interface TeamMapper {
     @Mapping(target = "createdAt",ignore = true)
     @Mapping(target = "players",ignore = true)
     @Mapping(target = "headCoach",ignore = true)
+    @Mapping(target = "tournamentTeam",ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy= NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromRequest(TeamUpdateRequest request, @MappingTarget Team team);
+
+
+
+
 
 
 }

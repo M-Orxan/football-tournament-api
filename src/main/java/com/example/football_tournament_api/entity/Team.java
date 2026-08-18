@@ -29,6 +29,9 @@ public class Team extends BaseEntity {
     @JoinColumn(name = "head_coach_id")
     private HeadCoach headCoach;
 
+    @OneToMany(mappedBy = "team",cascade=CascadeType.ALL,orphanRemoval = true)
+    private List<TournamentTeam> tournamentTeams=new ArrayList<>();
+
     public void addPlayer(Player player){
         players.add(player);
         player.setTeam(this);

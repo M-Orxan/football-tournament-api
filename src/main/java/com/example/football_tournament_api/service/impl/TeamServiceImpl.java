@@ -12,7 +12,6 @@ import com.example.football_tournament_api.repository.HeadCoachRepository;
 import com.example.football_tournament_api.repository.PlayerRepository;
 import com.example.football_tournament_api.repository.TeamRepository;
 import com.example.football_tournament_api.service.TeamService;
-import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -101,4 +100,8 @@ public class TeamServiceImpl implements TeamService {
        //team.setHeadCoach(null);//bu kod islemedi
         teamRepository.delete(team);
     }
+
+
+
+
 }

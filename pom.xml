@@ -74,11 +74,7 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>football-tournament-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -88,11 +84,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-flyway</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>football-tournament-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail-test</artifactId>
@@ -106,14 +98,36 @@
 			<scope>runtime</scope>
 		</dependency>
 
+<!--		&lt;!&ndash; JJWT API &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.jsonwebtoken</groupId>-->
+<!--			<artifactId>jjwt-api</artifactId>-->
+<!--			<version>0.12.5</version>-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; JJWT Impl (Runtime üçün) &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.jsonwebtoken</groupId>-->
+<!--			<artifactId>jjwt-impl</artifactId>-->
+<!--			<version>0.12.5</version>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; JJWT Jackson (JSON serializer/deserializer üçün) &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.jsonwebtoken</groupId>-->
+<!--			<artifactId>jjwt-jackson</artifactId>-->
+<!--			<version>0.12.5</version>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; Spring Security Core və Web dəstəyi üçün &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-security</artifactId>-->
+<!--		</dependency>-->
 
 
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 
 	</dependencies>
 
@@ -134,7 +148,6 @@
 					<target>${java.version}</target>
 
 					<annotationProcessorPaths>
-
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
@@ -146,7 +159,6 @@
 							<artifactId>mapstruct-processor</artifactId>
 							<version>${mapstruct.version}</version>
 						</path>
-
 					</annotationProcessorPaths>
 
 				</configuration>

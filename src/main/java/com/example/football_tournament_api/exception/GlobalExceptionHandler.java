@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.management.BadAttributeValueExpException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> new ValidationError(
                         fieldError.getDefaultMessage(),
                         fieldError.getField(),
-                        fieldError.getRejectedValue()!=null ? fieldError.getDefaultMessage() :"null"
+                        fieldError.getRejectedValue()!=null ? fieldError.getRejectedValue().toString() :"null"
                 )).toList();
 
         ErrorResponse response=new ErrorResponse(
@@ -60,4 +61,22 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException exception){
+
+
+        ErrorResponse response=new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                exception.getMessage(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
 }

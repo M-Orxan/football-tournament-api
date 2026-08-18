@@ -46,7 +46,7 @@ public class HeadCoachServiceImpl implements HeadCoachService {
         HeadCoach headCoach=headCoachRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Head coach not found"));
 
-        if(headCoachRepository.existsByName(request.name())&&headCoach.getName().equals(request.name())){
+        if(headCoachRepository.existsByName(request.name())&&!headCoach.getName().equals(request.name())){
             throw new AlreadyExistsException("This head coach already exists");
         }
 

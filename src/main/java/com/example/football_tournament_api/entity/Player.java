@@ -21,6 +21,5 @@ public class Player extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
-
     private Team team;
 }

@@ -1,8 +1,6 @@
 package com.example.football_tournament_api.controller;
 
 
-import com.example.football_tournament_api.dto.player.PlayerResponse;
-import com.example.football_tournament_api.dto.player.PlayerUpdateRequest;
 import com.example.football_tournament_api.dto.team.TeamCreateRequest;
 import com.example.football_tournament_api.dto.team.TeamResponse;
 import com.example.football_tournament_api.dto.team.TeamUpdateRequest;
@@ -46,4 +44,6 @@ public class TeamController {
     public ResponseEntity<TeamResponse> update(@Valid @RequestBody TeamUpdateRequest request, @PathVariable Integer id){
         return ResponseEntity.ok(teamService.update(request,id));
     }
+
+
 }
