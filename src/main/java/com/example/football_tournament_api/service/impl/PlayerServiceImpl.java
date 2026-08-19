@@ -76,7 +76,6 @@ public class PlayerServiceImpl implements PlayerService {
             player.setTeam(teamProxy);
         }
 
-
         playerMapper.updateEntityFromRequest(request, player);
         player.setUpdatedAt(LocalDateTime.now());
         playerRepository.save(player);

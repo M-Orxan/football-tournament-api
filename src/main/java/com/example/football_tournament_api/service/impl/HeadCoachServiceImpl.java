@@ -28,7 +28,6 @@ public class HeadCoachServiceImpl implements HeadCoachService {
         if(headCoachRepository.existsByName(request.name())){
             throw  new AlreadyExistsException("This coach already exists");
         }
-
         HeadCoach headCoach=headCoachMapper.toHeadCoach(request);
         HeadCoach savedHeadCoach=headCoachRepository.save(headCoach);
         HeadCoachResponse response=headCoachMapper.toHeadCoachResponse(savedHeadCoach);
