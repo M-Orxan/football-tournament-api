@@ -1,6 +1,7 @@
 package com.example.football_tournament_api.entity;
 
 
+import com.example.football_tournament_api.enums.MatchStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,4 +31,13 @@ public class Match {
 
     private Integer homeTeamScore;
     private Integer awayTeamScore;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MatchStatus status=MatchStatus.NotFinished;
+
+
+    @Column(nullable = false)
+    private int roundNumber;
+    private int winnerTeamId;
 }

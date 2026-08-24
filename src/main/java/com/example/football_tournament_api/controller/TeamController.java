@@ -22,7 +22,6 @@ public class TeamController {
     @GetMapping
     public ResponseEntity<List<TeamResponse>> getTeams(){
         return ResponseEntity.ok(teamService.getAll());
-
     }
 
     @GetMapping("/{id}")

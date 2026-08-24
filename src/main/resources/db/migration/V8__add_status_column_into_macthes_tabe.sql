@@ -1,0 +1,4 @@
+
+
+    ALTER TABLE matches
+ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'NotFinished';

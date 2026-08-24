@@ -78,5 +78,50 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(InvalidTournamentTypeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTournamentTypeException(InvalidTournamentTypeException exception){
+
+
+        ErrorResponse response=new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                exception.getMessage(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
+    @ExceptionHandler(InvalidMatchScoreException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidMatchScoreException(InvalidMatchScoreException exception){
+
+
+        ErrorResponse response=new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                exception.getMessage(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(RoundNotCompletedException.class)
+    public ResponseEntity<ErrorResponse> handleRoundNotCompletedException(RoundNotCompletedException exception){
+
+
+        ErrorResponse response=new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                exception.getMessage(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 
 }

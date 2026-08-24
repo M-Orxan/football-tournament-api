@@ -1,5 +1,6 @@
 package com.example.football_tournament_api.entity;
 
+import com.example.football_tournament_api.enums.TournamentType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,5 +24,9 @@ public class Tournament extends BaseEntity{
 
     @OneToMany(mappedBy = "tournament",cascade= CascadeType.ALL,orphanRemoval = true)
     private List<TournamentTeam> tournamentTeams=new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TournamentType type;
 
 }

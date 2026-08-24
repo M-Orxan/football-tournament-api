@@ -28,7 +28,7 @@ public interface TeamMapper {
     @Mapping(target = "updatedAt",ignore = true)
     @Mapping(target = "headCoach",ignore = true)
     @Mapping(target = "players",ignore = true)
-    @Mapping(target = "tournamentTeam",ignore = true)
+    @Mapping(target = "tournamentTeams",ignore = true)
     Team toTeam(TeamCreateRequest request);
 
 
@@ -39,7 +39,7 @@ public interface TeamMapper {
     @Mapping(target = "createdAt",ignore = true)
     @Mapping(target = "players",ignore = true)
     @Mapping(target = "headCoach",ignore = true)
-    @Mapping(target = "tournamentTeam",ignore = true)
+    @Mapping(target = "tournamentTeams",ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy= NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromRequest(TeamUpdateRequest request, @MappingTarget Team team);
 

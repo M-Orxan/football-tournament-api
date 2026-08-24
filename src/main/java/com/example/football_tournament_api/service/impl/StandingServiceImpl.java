@@ -1,13 +1,16 @@
 package com.example.football_tournament_api.service.impl;
 
 import com.example.football_tournament_api.dto.standing.StandingResponse;
+import com.example.football_tournament_api.entity.Match;
 import com.example.football_tournament_api.entity.Standing;
 import com.example.football_tournament_api.entity.Team;
 import com.example.football_tournament_api.entity.Tournament;
+import com.example.football_tournament_api.enums.MatchStatus;
 import com.example.football_tournament_api.event.MatchFinishedEvent;
 import com.example.football_tournament_api.event.TournamentMatchesCreatedEvent;
 import com.example.football_tournament_api.exception.ResourceNotFoundException;
 import com.example.football_tournament_api.mapper.StandingMapper;
+import com.example.football_tournament_api.repository.MatchRepository;
 import com.example.football_tournament_api.repository.StandingRepository;
 import com.example.football_tournament_api.repository.TeamRepository;
 import com.example.football_tournament_api.repository.TournamentRepository;
@@ -27,43 +30,52 @@ public class StandingServiceImpl implements StandingService {
     private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
     private final StandingMapper standingMapper;
+    private final MatchRepository matchRepository;
 
     @Override
     @EventListener
     @Transactional
     public void onMatchFinished(MatchFinishedEvent event) {
-        Standing homeTeamStanding=standingRepository.findByTournamentAndTeam(event.tournamentId(),event.homeTeamId())
-                .orElseThrow(()->new ResourceNotFoundException("Home team standing not found"));
 
-        Standing awayTeamStanding=standingRepository.findByTournamentAndTeam(event.tournamentId(),event.awayTeamId())
-                .orElseThrow(()->new ResourceNotFoundException("Away team standing not found"));
 
-        homeTeamStanding.setGoalsFor(homeTeamStanding.getGoalsFor()+event.homeTeamScore());
-        homeTeamStanding.setGoalsAgainst(homeTeamStanding.getGoalsAgainst()+event.awayTeamScore());
-        homeTeamStanding.setGoalDifference(homeTeamStanding.getGoalsFor()- homeTeamStanding.getGoalsAgainst());
-        homeTeamStanding.setPlayed(homeTeamStanding.getPlayed()+1);
+            Standing homeTeamStanding=standingRepository.findByTournamentAndTeam(event.tournamentId(),event.homeTeamId())
+                    .orElseThrow(()->new ResourceNotFoundException("Home team standing not found"));
 
-        awayTeamStanding.setGoalsFor(awayTeamStanding.getGoalsFor()+event.awayTeamScore());
-        awayTeamStanding.setGoalsAgainst(awayTeamStanding.getGoalsAgainst()+event.homeTeamScore());
-        awayTeamStanding.setGoalDifference(awayTeamStanding.getGoalsFor()- awayTeamStanding.getGoalsAgainst());
-        awayTeamStanding.setPlayed(awayTeamStanding.getPlayed()+1);
+            Standing awayTeamStanding=standingRepository.findByTournamentAndTeam(event.tournamentId(),event.awayTeamId())
+                    .orElseThrow(()->new ResourceNotFoundException("Away team standing not found"));
 
-        if(event.homeTeamScore()>event.awayTeamScore()){
-            homeTeamStanding.setWon(homeTeamStanding.getWon()+1);
-            awayTeamStanding.setLost(awayTeamStanding.getLost()+1);
-            homeTeamStanding.setPoints(homeTeamStanding.getPoints()+3);
-        }
-        else if(event.awayTeamScore()>event.homeTeamScore()){
-            awayTeamStanding.setWon(awayTeamStanding.getWon()+1);
-            homeTeamStanding.setLost(homeTeamStanding.getLost()+1);
-            awayTeamStanding.setPoints(awayTeamStanding.getPoints()+3);
-        }
-        else{
-            homeTeamStanding.setDrawn(homeTeamStanding.getDrawn()+1);
-            awayTeamStanding.setDrawn(awayTeamStanding.getDrawn()+1);
-            homeTeamStanding.setPoints(homeTeamStanding.getPoints()+1);
-            awayTeamStanding.setPoints(awayTeamStanding.getPoints()+1);
-        }
+
+
+            homeTeamStanding.setGoalsFor(homeTeamStanding.getGoalsFor()+event.homeTeamScore());
+            homeTeamStanding.setGoalsAgainst(homeTeamStanding.getGoalsAgainst()+event.awayTeamScore());
+            homeTeamStanding.setGoalDifference(homeTeamStanding.getGoalsFor()- homeTeamStanding.getGoalsAgainst());
+            homeTeamStanding.setPlayed(homeTeamStanding.getPlayed()+1);
+
+            awayTeamStanding.setGoalsFor(awayTeamStanding.getGoalsFor()+event.awayTeamScore());
+            awayTeamStanding.setGoalsAgainst(awayTeamStanding.getGoalsAgainst()+event.homeTeamScore());
+            awayTeamStanding.setGoalDifference(awayTeamStanding.getGoalsFor()- awayTeamStanding.getGoalsAgainst());
+            awayTeamStanding.setPlayed(awayTeamStanding.getPlayed()+1);
+
+            if(event.homeTeamScore()>event.awayTeamScore()){
+                homeTeamStanding.setWon(homeTeamStanding.getWon()+1);
+                awayTeamStanding.setLost(awayTeamStanding.getLost()+1);
+                homeTeamStanding.setPoints(homeTeamStanding.getPoints()+3);
+            }
+            else if(event.awayTeamScore()>event.homeTeamScore()){
+                awayTeamStanding.setWon(awayTeamStanding.getWon()+1);
+                homeTeamStanding.setLost(homeTeamStanding.getLost()+1);
+                awayTeamStanding.setPoints(awayTeamStanding.getPoints()+3);
+            }
+            else{
+                homeTeamStanding.setDrawn(homeTeamStanding.getDrawn()+1);
+                awayTeamStanding.setDrawn(awayTeamStanding.getDrawn()+1);
+                homeTeamStanding.setPoints(homeTeamStanding.getPoints()+1);
+                awayTeamStanding.setPoints(awayTeamStanding.getPoints()+1);
+            }
+
+
+
+
     }
 
     @Override

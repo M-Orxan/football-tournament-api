@@ -1,0 +1,4 @@
+
+
+ALTER TABLE tournaments
+    ADD COLUMN type VARCHAR(50) NOT NULL;

@@ -8,6 +8,8 @@ public record MatchResponse(
         String awayTeam,
         Integer homeTeamScore,
         Integer awayTeamScore,
+        int winnerTeamId,
+        int roundNumber,
         Integer tournamentId
 ) {
 }

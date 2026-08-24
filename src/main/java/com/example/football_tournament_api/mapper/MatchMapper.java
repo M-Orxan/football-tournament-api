@@ -3,6 +3,7 @@ package com.example.football_tournament_api.mapper;
 import com.example.football_tournament_api.dto.match.MatchResponse;
 import com.example.football_tournament_api.dto.match.UpdateMatchScoreRequest;
 import com.example.football_tournament_api.entity.Match;
+import com.example.football_tournament_api.enums.MatchStatus;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -24,5 +25,8 @@ public interface MatchMapper {
     @Mapping(target = "tournament",ignore = true)
     @Mapping(target = "homeTeam",ignore = true)
     @Mapping(target = "awayTeam",ignore = true)
+    @Mapping(target = "status",ignore = true)
+    @Mapping(target = "roundNumber",ignore = true)
+    @Mapping(target = "winnerTeamId",ignore = true)
     void updateMatchScore(UpdateMatchScoreRequest request,@MappingTarget Match match);
 }
