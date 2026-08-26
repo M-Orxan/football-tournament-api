@@ -31,6 +31,7 @@ public class Standing extends BaseEntity{
     private int goalsAgainst=0;
     private int goalDifference=0;
     private int points=0;
+    private int cleanSheet=0;
 
 
 }

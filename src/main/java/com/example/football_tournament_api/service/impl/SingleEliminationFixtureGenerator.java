@@ -49,6 +49,9 @@ public class SingleEliminationFixtureGenerator implements FixtureGeneratorStrate
 
 
         List<Team> registeredTeams = tournamentTeamRepository.findTeamsByTournamentId(tournament.getId());
+       if(!isPowerOfTwoReadable(registeredTeams.size())){
+           throw new IllegalStateException("Team count of this tournament is not valid. Required count is power of 2");
+       }
         List<Match> matches = generateSingleEliminationMatches(tournament, registeredTeams, 1);
         matchRepository.saveAll(matches);
         return matchRepository.findByTournamentId(tournament.getId());
@@ -113,4 +116,8 @@ public class SingleEliminationFixtureGenerator implements FixtureGeneratorStrate
         return matchRepository.findByTournamentId(tournamentId);
     }
 
+
+    private boolean isPowerOfTwoReadable(int n) {
+        return n > 0 && Integer.bitCount(n) == 1;
+    }
 }

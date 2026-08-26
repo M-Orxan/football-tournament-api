@@ -36,6 +36,9 @@ public class RoundRobinFixtureGenerator implements FixtureGeneratorStrategy {
         }
 
         List<Team> registeredTeams = tournamentTeamRepository.findTeamsByTournamentId(tournament.getId());
+        if(registeredTeams.size()%2==1){
+            throw new IllegalStateException("Team count of round robin tournament must be odd number");
+        }
         List<Match> matches = generateRoundRobinMatches(tournament, registeredTeams);
         List<Integer> teamIds=tournamentTeamRepository.findTeamIdsByTournamentId(tournament.getId());
         applicationEventPublisher.publishEvent(new TournamentMatchesCreatedEvent(tournament.getId(),teamIds));

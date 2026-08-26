@@ -109,6 +109,14 @@ public class StandingServiceImpl implements StandingService {
                 awayTeamStanding.setPoints(awayTeamStanding.getPoints()+1);
             }
 
+            if(match.getHomeTeamScore()==0){
+                awayTeamStanding.setCleanSheet(awayTeamStanding.getCleanSheet()+1);
+            }
+
+            if(match.getAwayTeamScore()==0){
+                homeTeamStanding.setCleanSheet(homeTeamStanding.getCleanSheet()+1);
+            }
+
             homeTeamStanding.setGoalsFor(homeTeamStanding.getGoalsFor()+match.getHomeTeamScore());
             homeTeamStanding.setGoalsAgainst(homeTeamStanding.getGoalsAgainst()+match.getAwayTeamScore());
             homeTeamStanding.setGoalDifference(homeTeamStanding.getGoalsFor()- homeTeamStanding.getGoalsAgainst());
@@ -130,6 +138,7 @@ public class StandingServiceImpl implements StandingService {
         standing.setGoalsAgainst(0);
         standing.setGoalDifference(0);
         standing.setPoints(0);
+        standing.setCleanSheet(0);
     }
 
 
