@@ -6,7 +6,6 @@ import com.example.football_tournament_api.entity.Match;
 import com.example.football_tournament_api.entity.Tournament;
 import com.example.football_tournament_api.enums.MatchStatus;
 import com.example.football_tournament_api.enums.TournamentType;
-import com.example.football_tournament_api.event.MatchFinishedEvent;
 import com.example.football_tournament_api.exception.InvalidMatchScoreException;
 import com.example.football_tournament_api.exception.ResourceNotFoundException;
 import com.example.football_tournament_api.mapper.MatchMapper;
@@ -14,10 +13,9 @@ import com.example.football_tournament_api.repository.MatchRepository;
 import com.example.football_tournament_api.repository.TournamentRepository;
 import com.example.football_tournament_api.service.MatchResultProcessor;
 import com.example.football_tournament_api.service.MatchService;
+import com.example.football_tournament_api.service.StandingService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,21 +29,35 @@ public class MatchServiceImpl implements MatchService {
     private final MatchMapper matchMapper;
     private final MatchResultProcessorFactory matchResultProcessorFactory;
 
+
     @Override
     @Transactional
     public MatchResponse updateMatchScore(Integer matchId, UpdateMatchScoreRequest request) {
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
-        matchMapper.updateMatchScore(request, match);
-        match.setStatus(MatchStatus.Finished);
-        if(request.homeTeamScore()> request.awayTeamScore()){
-            match.setWinnerTeamId(match.getHomeTeam().getId());
+
+        if (match.getTournament().getType() == TournamentType.SingleElimination) {
+            boolean isNextRoundGenerated = matchRepository.existsByTournamentIdAndRoundNumberGreaterThan
+                    (match.getTournament().getId(), match.getRoundNumber());
+
+            if (isNextRoundGenerated) {
+                throw new IllegalStateException("Next round for this tournament had already been generated. You can't edit for previous round");
+            }
         }
-        else if(request.awayTeamScore()>request.homeTeamScore()){
+
+        if ((request.homeTeamScore().equals(request.awayTeamScore()) &&
+                match.getTournament().getType() == TournamentType.SingleElimination)) {
+            throw new InvalidMatchScoreException("Invalid score. Can't be draw");
+        } else if (request.homeTeamScore() > request.awayTeamScore()) {
+            match.setWinnerTeamId(match.getHomeTeam().getId());
+        } else {
             match.setWinnerTeamId(match.getAwayTeam().getId());
         }
-        TournamentType type=match.getTournament().getType();
-        MatchResultProcessor processor=matchResultProcessorFactory.getProcessor(type);
+        match.setStatus(MatchStatus.Finished);
+        matchMapper.updateMatchScore(request, match);
+
+        TournamentType type = match.getTournament().getType();
+        MatchResultProcessor processor = matchResultProcessorFactory.getProcessor(type);
         processor.processMatch(match);
 
 

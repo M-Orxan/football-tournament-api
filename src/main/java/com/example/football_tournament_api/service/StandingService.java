@@ -10,5 +10,5 @@ public interface StandingService {
     void onMatchFinished(MatchFinishedEvent event);
     void onTournamentMatchesCreated(TournamentMatchesCreatedEvent event);
     List<StandingResponse> getAll(Integer tournamentId);
-    void recalculateFromZer(Integer tournamentId);
+    void recalculateTournamentStandings(Integer tournamentId);
 }

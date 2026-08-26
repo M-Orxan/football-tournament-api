@@ -9,22 +9,32 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface MatchRepository extends JpaRepository<Match,Integer> {
+public interface MatchRepository extends JpaRepository<Match, Integer> {
 
     boolean existsByTournamentId(Integer tournamentId);
-    boolean existsByTournamentIdAndStatus(Integer tournamentId,MatchStatus status);
+
+    boolean existsByTournamentIdAndStatus(Integer tournamentId, MatchStatus status);
+
     @Query("select m from Match m join fetch m.homeTeam join fetch m.awayTeam where m.tournament.id=:tournamentId order by m.id")
     List<Match> findByTournamentId(@Param("tournamentId") Integer tournamentId);
 
     @Query("select m from Match m join fetch m.homeTeam join fetch m.awayTeam where m.id=:matchId")
-    Optional<Match> findMatchById(@Param("matchId")Integer id);
+    Optional<Match> findMatchById(@Param("matchId") Integer id);
 
     @Query("select m from Match m join fetch m.homeTeam join fetch m.awayTeam where m.tournament.id=:tournamentId and m.status=:status order by m.id")
-    List<Match> findByTournamentIdAndStatus(@Param("tournamentId") Integer tournamentId, @Param("status")MatchStatus status);
+    List<Match> findByTournamentIdAndStatus(@Param("tournamentId") Integer tournamentId, @Param("status") MatchStatus status);
 
     @Query("select m from Match m join fetch m.homeTeam join fetch m.awayTeam where m.tournament.id=:tournamentId and m.roundNumber=:roundNumber order by m.id")
-    List<Match> findByTournamentIdAndRoundNumber(@Param("tournamentId") Integer tournamentId, @Param("roundNumber")int roundNumber);
+    List<Match> findByTournamentIdAndRoundNumber(@Param("tournamentId") Integer tournamentId, @Param("roundNumber") int roundNumber);
 
+    //@Query("select m from Match m join fetch m.homeTeam join fetch m.awayTeam where m.tournament.id=:tournamentId and m.roundNumber<:roundNumber order by m.id")
+    boolean existsByTournamentIdAndRoundNumberGreaterThan(@Param("tournamentId") Integer tournamentId, @Param("roundNumber") int roundNumber);
 
+    boolean existsByTournamentIdAndRoundNumber(@Param("tournamentId") Integer tournamentId, @Param("roundNumber") int roundNumber);
 
+    @Query("SELECT m FROM Match m WHERE m.tournament.id = :tournamentId " +
+            "AND (m.homeTeam.id = :teamId OR m.awayTeam.id = :teamId) " +
+            "AND m.status = 'Finished'")
+    List<Match> findAllFinishedMatchesByTeam(@Param("tournamentId") Integer tournamentId,
+                                             @Param("teamId") Integer teamId);
 }

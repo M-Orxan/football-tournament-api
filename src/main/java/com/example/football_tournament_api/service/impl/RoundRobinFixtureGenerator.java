@@ -23,13 +23,14 @@ public class RoundRobinFixtureGenerator implements FixtureGeneratorStrategy {
     private final MatchRepository matchRepository;
     private final TournamentTeamRepository tournamentTeamRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+
     @Override
     public TournamentType getType() {
         return TournamentType.RoundRobin;
     }
 
     @Override
-    public void generateFixture(Tournament tournament) {
+    public List<Match> generateFixture(Tournament tournament) {
         if(matchRepository.existsByTournamentId(tournament.getId())){
             throw new AlreadyExistsException("Matches of this tournament have already been generated");
         }
@@ -39,6 +40,7 @@ public class RoundRobinFixtureGenerator implements FixtureGeneratorStrategy {
         List<Integer> teamIds=tournamentTeamRepository.findTeamIdsByTournamentId(tournament.getId());
         applicationEventPublisher.publishEvent(new TournamentMatchesCreatedEvent(tournament.getId(),teamIds));
         matchRepository.saveAll(matches);
+       return matchRepository.findByTournamentId(tournament.getId());
     }
 
     private List<Match> generateRoundRobinMatches(Tournament tournament, List<Team> teams) {

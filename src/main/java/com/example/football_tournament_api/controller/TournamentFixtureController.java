@@ -1,5 +1,6 @@
 package com.example.football_tournament_api.controller;
 
+import com.example.football_tournament_api.dto.match.MatchResponse;
 import com.example.football_tournament_api.service.TournamentFixtureService;
 import com.example.football_tournament_api.service.impl.TournamentFixtureServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -10,33 +11,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/tournament-fixture")
 @RequiredArgsConstructor
 public class TournamentFixtureController {
     private final TournamentFixtureService tournamentFixtureService;
 
-//    @PostMapping("/roundRobin/{tournamentId}")
-//    public ResponseEntity<Void> generateRoundRobinMatches(@PathVariable Integer tournamentId){
-//        tournamentFixtureService.generateRoundRobinMatches(tournamentId);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
-//
-//    @PostMapping("/singleElimination/{tournamentId}")
-//    public ResponseEntity<Void> generateSingleEliminationMatches(@PathVariable Integer tournamentId){
-//        tournamentFixtureService.generateSingleEliminationMatches(tournamentId);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
+
 
     @PostMapping("/{tournamentId}/fixture")
-    public ResponseEntity<Void> generateFixture(@PathVariable Integer tournamentId){
-        tournamentFixtureService.generateFixture(tournamentId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<List<MatchResponse>> generateFixture(@PathVariable Integer tournamentId){
+      List<MatchResponse> response=  tournamentFixtureService.generateFixture(tournamentId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/{tournamentId}/rounds/{currentRoundNumber}/next")
-    public ResponseEntity<Void> generateNextRound(@PathVariable Integer tournamentId,@PathVariable int currentRoundNumber){
-        tournamentFixtureService.generateNextRound(tournamentId,currentRoundNumber);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @PostMapping("/{tournamentId}/rounds/{nextRoundNumber}/next")
+    public ResponseEntity< List<MatchResponse>> generateNextRound(@PathVariable Integer tournamentId,@PathVariable int nextRoundNumber){
+        List<MatchResponse> response=   tournamentFixtureService.generateNextRound(tournamentId,nextRoundNumber);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

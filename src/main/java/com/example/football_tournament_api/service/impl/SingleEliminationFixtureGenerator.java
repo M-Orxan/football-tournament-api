@@ -14,7 +14,6 @@ import com.example.football_tournament_api.repository.TournamentRepository;
 import com.example.football_tournament_api.repository.TournamentTeamRepository;
 import com.example.football_tournament_api.service.FixtureGeneratorStrategy;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -38,30 +37,32 @@ public class SingleEliminationFixtureGenerator implements FixtureGeneratorStrate
     }
 
     @Override
-    public void generateFixture(Tournament tournament) {
-        if (matchRepository.existsByTournamentIdAndStatus(tournament.getId(), MatchStatus.NotFinished)) {
-            throw new AlreadyExistsException("Matches of current round have not been completed yet");
+    public List<Match> generateFixture(Tournament tournament) {
+
+        if (matchRepository.existsByTournamentIdAndRoundNumberGreaterThan(tournament.getId(), 1)) {
+            throw new AlreadyExistsException("This round had already finished");
         }
 
+        if (matchRepository.existsByTournamentIdAndRoundNumber(tournament.getId(), 1)) {
+            throw new AlreadyExistsException("Fixture of this round 1 had already been generated");
+        }
+
+
         List<Team> registeredTeams = tournamentTeamRepository.findTeamsByTournamentId(tournament.getId());
-        List<Match> matches = generateSingleEliminationMatches(tournament, registeredTeams,1);
+        List<Match> matches = generateSingleEliminationMatches(tournament, registeredTeams, 1);
         matchRepository.saveAll(matches);
+        return matchRepository.findByTournamentId(tournament.getId());
     }
 
     private List<Match> generateSingleEliminationMatches(Tournament tournament, List<Team> teams, int roundNumber) {
 
         List<Team> availableTeams = new ArrayList<>(teams);
         List<Match> matches = new ArrayList<>();
-        int matchCount = availableTeams.size() / 2;
-        Collections.shuffle(availableTeams);
-        for (int i = 0; i < matchCount; i++) {
-            int homeTeamIndex = ThreadLocalRandom.current().nextInt(0, availableTeams.size());
-            Team homeTeam = availableTeams.get(homeTeamIndex);
-            availableTeams.remove(homeTeam);
 
-            int awayTeamIndex = ThreadLocalRandom.current().nextInt(0, availableTeams.size());
-            Team awayTeam = availableTeams.get(awayTeamIndex);
-            availableTeams.remove(awayTeam);
+        Collections.shuffle(availableTeams);
+        for (int i = 0; i < availableTeams.size(); i += 2) {
+            Team homeTeam = availableTeams.get(i);
+            Team awayTeam = availableTeams.get(i + 1);
 
             Match match = new Match();
             match.setTournament(tournament);
@@ -73,39 +74,43 @@ public class SingleEliminationFixtureGenerator implements FixtureGeneratorStrate
         return matches;
     }
 
-@Override
-    public void generateNextRound(Integer tournamentId, Integer nextRoundNumber) {
+    @Override
+    public List<Match> generateNextRound(Integer tournamentId, Integer nextRoundNumber) {
 
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tournament not found"));
 
+        if (matchRepository.existsByTournamentIdAndRoundNumber(tournament.getId(), nextRoundNumber)) {
+            throw new AlreadyExistsException("Fixture of round " + nextRoundNumber + " had already been generated");
+        }
 
-        List<Match> currentMatches = matchRepository.findByTournamentIdAndRoundNumber(tournamentId, nextRoundNumber-1);
-        if(currentMatches.isEmpty()){
+        List<Match> lastRoundMatches = matchRepository.findByTournamentIdAndRoundNumber(tournamentId, nextRoundNumber - 1);
+        if (lastRoundMatches.isEmpty()) {
             throw new IllegalStateException("Invalid round number");
         }
 
 
-        boolean isCurrentRoundFinished = currentMatches.stream()
+        boolean isLastRoundFinished = lastRoundMatches.stream()
                 .allMatch(m -> m.getStatus() == MatchStatus.Finished);
 
-        if (!isCurrentRoundFinished) {
-            throw new RoundNotCompletedException("Round " + (nextRoundNumber-1) + " has not been completed yet");
+        if (!isLastRoundFinished) {
+            throw new RoundNotCompletedException("Last round " + (nextRoundNumber - 1) + " has not been completed yet");
         }
 
-        List<Integer> winnerTeamIds=currentMatches.stream()
+        List<Integer> winnerTeamIds = lastRoundMatches.stream()
                 .map(Match::getWinnerTeamId)
                 .filter(Objects::nonNull)
                 .toList();
-        List<Team> winnerTeams=teamRepository.findAllById(winnerTeamIds);
+        List<Team> winnerTeams = teamRepository.findAllById(winnerTeamIds);
 
-        if(winnerTeams.size()<2){
+        if (winnerTeams.size() < 2) {
             throw new IllegalStateException("Tournament already finished");
         }
 
-        List<Match> nextRoundMatches=generateSingleEliminationMatches(tournament,winnerTeams,nextRoundNumber);
+        List<Match> nextRoundMatches = generateSingleEliminationMatches(tournament, winnerTeams, nextRoundNumber);
 
         matchRepository.saveAll(nextRoundMatches);
+        return matchRepository.findByTournamentId(tournamentId);
     }
 
 }
