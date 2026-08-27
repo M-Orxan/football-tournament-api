@@ -18,4 +18,6 @@ public interface StandingRepository extends JpaRepository<Standing,Integer> {
 
 
     List<Standing> findAllByTournamentIdOrderByPointsDescGoalDifferenceDescGoalsForDesc(Integer tournamentId);
+
+
 }

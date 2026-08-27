@@ -1,7 +1,6 @@
 package com.example.football_tournament_api.controller;
 
 import com.example.football_tournament_api.dto.standing.StandingResponse;
-import com.example.football_tournament_api.dto.team.TeamResponse;
 import com.example.football_tournament_api.service.StandingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -3,7 +3,6 @@ package com.example.football_tournament_api.controller;
 import com.example.football_tournament_api.dto.player.PlayerCreateRequest;
 import com.example.football_tournament_api.dto.player.PlayerResponse;
 import com.example.football_tournament_api.dto.player.PlayerUpdateRequest;
-import com.example.football_tournament_api.entity.Player;
 import com.example.football_tournament_api.service.PlayerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
