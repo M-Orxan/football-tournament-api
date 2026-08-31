@@ -6,9 +6,11 @@ import com.example.football_tournament_api.dto.error.ValidationError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import javax.management.BadAttributeValueExpException;
 import java.time.LocalDateTime;
@@ -132,11 +134,39 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "Invalid Stat type. Allowed values are:[CLEAN_SHEETS, GOALS_SCORED, GOALS_CONCEDED, POINTS, WON, LOST, DRAWN, GOAL_DIFFERENCE, PLAYED]",
+                "Invalid stat type or sort order. Allowed stat types are:[CLEAN_SHEETS, GOALS_SCORED, GOALS_CONCEDED, POINTS, WON, LOST, DRAWN, GOAL_DIFFERENCE, PLAYED] Sort order:[MAX, MIN, AVERAGE]",
                 null
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException exception) {
+        ErrorResponse response=new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Requested endpoint or resource was not found",
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException exception) {
+
+        String message=String.format("Required query parameter '%s' of type %s is missing",exception.getParameterName(),exception.getParameterType());
+        ErrorResponse response=new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                message,
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }

@@ -1,37 +1,26 @@
 package com.example.football_tournament_api.mapper;
 
-import com.example.football_tournament_api.dto.statistics.TeamStatResponse;
+import com.example.football_tournament_api.dto.team.TeamSimpleResponse;
+import com.example.football_tournament_api.dto.tournament.TournamentStatResponse;
 import com.example.football_tournament_api.entity.Standing;
+import com.example.football_tournament_api.enums.AggregationType;
 import com.example.football_tournament_api.enums.StatType;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
+import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+
 import java.util.List;
 
-@Mapper(componentModel = "spring")
-public abstract class StatisticsMapper {
+@Component
+public class StatisticsMapper {
 
-    public TeamStatResponse toResponse(Standing standing, StatType statType){
+     public TournamentStatResponse toTournamentStatResponse(Integer tournamentId,
+                                                            StatType statType,
+                                                            AggregationType aggregationType,
+                                                            Double value,
+                                                            List<Standing> standings){
+          List<TeamSimpleResponse> teams=standings.stream()
+                  .map(s->new TeamSimpleResponse(s.getTeam().getId(),s.getTeam().getName())).toList();
 
-        if(standing==null) return null;
-        return new TeamStatResponse(
-                standing.getTeam().getId(),
-                standing.getTeam().getName(),
-                statType,
-                statType.extractValue(standing)
-        );
-
-    }
-
-
-
-
-    public List<TeamStatResponse> toResponseList(List<Standing> standings, StatType statType){
-
-        if(standings==null) return Collections.emptyList();
-        return standings.stream().map(s->toResponse(s,statType)).toList();
-
-    }
+          return new TournamentStatResponse(tournamentId,statType,aggregationType,value,teams);
+     }
 }

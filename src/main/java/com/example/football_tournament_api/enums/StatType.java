@@ -4,6 +4,7 @@ import com.example.football_tournament_api.entity.Standing;
 
 import java.util.function.Function;
 
+
 public enum StatType {
     CLEAN_SHEETS(Standing::getCleanSheet),
     GOALS_SCORED(Standing::getGoalsFor),
