@@ -16,13 +16,13 @@ import java.util.List;
 public class MatchController {
     private final MatchService matchService;
 
-    @GetMapping
-    public ResponseEntity<List<MatchResponse>> getAllByTournamentId(@RequestParam(required = true) Integer tournamentId){
+    @GetMapping("{tournamentId}")
+    public ResponseEntity<List<MatchResponse>> getAllByTournamentId(@PathVariable Integer tournamentId){
         List<MatchResponse> response=matchService.getMatchesByTournamentId(tournamentId);
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("{matchId}")
+    @GetMapping("{matchId}/match")
     public ResponseEntity<MatchResponse> getById(@PathVariable Integer matchId){
         MatchResponse response=matchService.getMatchById(matchId);
         return ResponseEntity.ok().body(response);

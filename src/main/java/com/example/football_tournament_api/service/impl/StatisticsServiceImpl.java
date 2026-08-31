@@ -34,7 +34,6 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new ResourceNotFoundException("Tournament not found");
         }
 
-
         List<Standing> standings = standingRepository.findAllByTournamentIdOrderByPointsDescGoalDifferenceDescGoalsForDesc(tournamentId);
 
         return switch (aggregationType){
@@ -42,7 +41,6 @@ public class StatisticsServiceImpl implements StatisticsService {
             case MIN -> calculateMinStats(tournamentId,standings,statType);
             case AVERAGE -> calculateAverageStats(tournamentId,standings,statType);
         };
-
     }
 
 
@@ -70,8 +68,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         double average = standings.stream()
                 .mapToInt(statType::extractValue).average().orElse(0.0);
 
-        return statisticsMapper.toTournamentStatResponse(tournamentId,statType,AggregationType.MIN,average,List.of());
+        return statisticsMapper.toTournamentStatResponse(tournamentId,statType,AggregationType.AVERAGE,average,List.of());
 
     }
+
+
 }
 
