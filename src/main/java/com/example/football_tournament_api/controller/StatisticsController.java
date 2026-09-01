@@ -1,6 +1,5 @@
 package com.example.football_tournament_api.controller;
 
-
 import com.example.football_tournament_api.dto.tournament.TournamentStatResponse;
 import com.example.football_tournament_api.enums.AggregationType;
 import com.example.football_tournament_api.enums.StatType;
@@ -11,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/stats")
 @RequiredArgsConstructor
@@ -21,8 +18,8 @@ public class StatisticsController {
 
     @GetMapping("{tournamentId}")
     public ResponseEntity<TournamentStatResponse> getTeamByDesiredStatType(@Valid @PathVariable Integer tournamentId,
-                                                                              @Valid @RequestParam StatType statType,
-                                                                           @Valid   @RequestParam AggregationType aggregationType
+                                                                           @Valid @RequestParam StatType statType,
+                                                                           @Valid @RequestParam AggregationType aggregationType
 
     ) {
         TournamentStatResponse response = statisticsService.getTournamentStats(tournamentId, statType, aggregationType);

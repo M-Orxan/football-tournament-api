@@ -13,4 +13,7 @@ public interface MatchService {
     MatchResponse updateMatchScore(Integer matchId, UpdateMatchScoreRequest request);
     public List<MatchResponse> getMatchesByTournamentId(Integer tournamentId);
     public MatchResponse getMatchById(Integer matchId);
+    public List<MatchResponse> simulateMatchesByRound(Integer tournamentId, int roundNumber);
+
+    List<MatchResponse> simulateAllMatchesByTournament(Integer tournamentId);
 }

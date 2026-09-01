@@ -34,6 +34,18 @@ public class MatchController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PutMapping("/{tournamentId}/{roundNumber}/simulate")
+    public ResponseEntity<List<MatchResponse>> simulateMatchesByRound(@PathVariable Integer tournamentId,@PathVariable int roundNumber){
+        List<MatchResponse> responses=matchService.simulateMatchesByRound(tournamentId,roundNumber);
+        return ResponseEntity.ok().body(responses);
+    }
+
+    @PutMapping("/{tournamentId}/simulate")
+    public ResponseEntity<List<MatchResponse>> simulateAllMatchesByTournaments(@PathVariable Integer tournamentId){
+        List<MatchResponse> responses=matchService.simulateAllMatchesByTournament(tournamentId);
+        return ResponseEntity.ok().body(responses);
+    }
+
 
 
 

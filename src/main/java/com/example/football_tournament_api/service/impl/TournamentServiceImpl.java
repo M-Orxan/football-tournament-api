@@ -66,13 +66,15 @@ public class TournamentServiceImpl implements TournamentService {
 
         Tournament tournament = tournamentRepository.findById(request.tournamentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tournament not found"));
-        Team team = teamRepository.findById(request.teamId())
-                .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
 
+        Team team = teamRepository.findById(request.teamId())
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found: "+request.teamId()));
         boolean isRegistered = tournamentTeamRepository.existsByTournamentIdAndTeamId(request.tournamentId(), request.teamId());
         if (isRegistered) {
-            throw new IllegalStateException("Team is already registered to this tournament");
+            throw new IllegalStateException("Team is already registered to this tournament: "+request.teamId());
         }
+
+
 
         TournamentTeam tournamentTeam = tournamentTeamMapper.toTournamentTeam(tournament, team);
         TournamentTeam savedTournamentTeam = tournamentTeamRepository.save(tournamentTeam);

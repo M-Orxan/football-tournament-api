@@ -18,8 +18,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class MatchServiceImpl implements MatchService {
             throw new InvalidMatchScoreException("Invalid score. Can't be draw");
         } else if (request.homeTeamScore() > request.awayTeamScore()) {
             match.setWinnerTeamId(match.getHomeTeam().getId());
-        } else {
+        } else if (request.awayTeamScore() > request.homeTeamScore()) {
             match.setWinnerTeamId(match.getAwayTeam().getId());
         }
         match.setStatus(MatchStatus.Finished);
@@ -85,6 +87,69 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
 
         return matchMapper.toMatchResponse(match);
+
+    }
+
+    @Override
+    @Transactional
+    public List<MatchResponse> simulateMatchesByRound(Integer tournamentId, int roundNumber) {
+
+        List<Match> matches = matchRepository.findByTournamentIdAndRoundNumber(tournamentId, roundNumber);
+        List<MatchResponse> responses = new ArrayList<>();
+
+        for (Match match : matches) {
+            int homeTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+            int awayTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+
+            if (match.getTournament().getType() == TournamentType.SingleElimination) {
+                while (homeTeamScore == awayTeamScore) {
+                    homeTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+                    awayTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+                }
+            }
+            UpdateMatchScoreRequest request = new UpdateMatchScoreRequest(
+                    homeTeamScore,
+                    awayTeamScore
+            );
+
+            responses.add(updateMatchScore(match.getId(), request));
+
+        }
+
+        return responses;
+
+
+    }
+
+
+@Override
+@Transactional
+    public List<MatchResponse> simulateAllMatchesByTournament(Integer tournamentId) {
+
+        List<Match> matches = matchRepository.findByTournamentId(tournamentId);
+        List<MatchResponse> responses = new ArrayList<>();
+
+        for (Match match : matches) {
+            int homeTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+            int awayTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+
+            if (match.getTournament().getType() == TournamentType.SingleElimination) {
+                while (homeTeamScore == awayTeamScore) {
+                    homeTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+                    awayTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+                }
+            }
+            UpdateMatchScoreRequest request = new UpdateMatchScoreRequest(
+                    homeTeamScore,
+                    awayTeamScore
+            );
+
+            responses.add(updateMatchScore(match.getId(), request));
+
+        }
+
+        return responses;
+
 
     }
 

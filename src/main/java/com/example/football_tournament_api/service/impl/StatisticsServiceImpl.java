@@ -5,6 +5,7 @@ import com.example.football_tournament_api.dto.tournament.TournamentStatResponse
 import com.example.football_tournament_api.entity.Standing;
 import com.example.football_tournament_api.enums.AggregationType;
 import com.example.football_tournament_api.enums.StatType;
+import com.example.football_tournament_api.enums.TournamentType;
 import com.example.football_tournament_api.exception.ResourceNotFoundException;
 import com.example.football_tournament_api.mapper.StatisticsMapper;
 import com.example.football_tournament_api.repository.StandingRepository;
@@ -34,7 +35,12 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new ResourceNotFoundException("Tournament not found");
         }
 
+        if(!tournamentRepository.isGivenType(tournamentId, TournamentType.RoundRobin)){
+            throw new ResourceNotFoundException("Stats are available only for round robin tournaments");
+        }
+
         List<Standing> standings = standingRepository.findAllByTournamentIdOrderByPointsDescGoalDifferenceDescGoalsForDesc(tournamentId);
+
 
         return switch (aggregationType){
             case MAX -> calculateMaxStats(tournamentId,standings,statType);
