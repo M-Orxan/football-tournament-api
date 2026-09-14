@@ -14,7 +14,6 @@ import com.example.football_tournament_api.service.TournamentTeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor

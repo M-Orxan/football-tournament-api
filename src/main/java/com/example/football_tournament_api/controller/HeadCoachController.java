@@ -5,6 +5,7 @@ import com.example.football_tournament_api.dto.head_coach.HeadCoachResponse;
 import com.example.football_tournament_api.dto.head_coach.HeadCoachUpdateRequest;
 import com.example.football_tournament_api.dto.team.TeamResponse;
 import com.example.football_tournament_api.service.HeadCoachService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class HeadCoachController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HeadCoachResponse> update(@RequestBody HeadCoachUpdateRequest request, @PathVariable Integer id){
+    public ResponseEntity<HeadCoachResponse> update(@Valid @RequestBody(required = false) HeadCoachUpdateRequest request, @PathVariable Integer id){
 
         return  ResponseEntity.status(HttpStatus.OK).body(headCoachService.update(request,id));
 

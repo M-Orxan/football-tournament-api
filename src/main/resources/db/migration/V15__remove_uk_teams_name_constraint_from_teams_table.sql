@@ -1,0 +1,1 @@
+alter table teams drop constraint uk_teams_name

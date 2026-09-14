@@ -54,7 +54,7 @@ public class SingleEliminationFixtureGenerator implements FixtureGeneratorStrate
        }
         List<Match> matches = generateSingleEliminationMatches(tournament, registeredTeams, 1);
         matchRepository.saveAll(matches);
-        return matchRepository.findByTournamentId(tournament.getId());
+        return matchRepository.findAllWithTeamsByTournamentId(tournament.getId());
     }
 
     private List<Match> generateSingleEliminationMatches(Tournament tournament, List<Team> teams, int roundNumber) {
@@ -113,7 +113,7 @@ public class SingleEliminationFixtureGenerator implements FixtureGeneratorStrate
         List<Match> nextRoundMatches = generateSingleEliminationMatches(tournament, winnerTeams, nextRoundNumber);
 
         matchRepository.saveAll(nextRoundMatches);
-        return matchRepository.findByTournamentId(tournamentId);
+        return matchRepository.findAllWithTeamsByTournamentId(tournamentId);
     }
 
 

@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.ERROR)
 
 public interface MatchMapper {
+
     @Mapping(target = "homeTeamId", source = "homeTeam.id")
     @Mapping(target = "awayTeamId", source = "awayTeam.id")
     @Mapping(target = "tournamentId", source = "tournament.id")

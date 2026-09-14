@@ -14,6 +14,7 @@ CREATE UNIQUE INDEX idx_head_coaches_name_active
     WHERE is_deleted = false;
 
 
+
 alter table teams
 add column head_coach_id BIGINT;
 

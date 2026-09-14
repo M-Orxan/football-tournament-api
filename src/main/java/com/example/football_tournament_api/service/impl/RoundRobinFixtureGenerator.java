@@ -31,19 +31,19 @@ public class RoundRobinFixtureGenerator implements FixtureGeneratorStrategy {
 
     @Override
     public List<Match> generateFixture(Tournament tournament) {
-        if(matchRepository.existsByTournamentId(tournament.getId())){
+        if (matchRepository.existsByTournamentId(tournament.getId())) {
             throw new AlreadyExistsException("Matches of this tournament have already been generated");
         }
 
         List<Team> registeredTeams = tournamentTeamRepository.findTeamsByTournamentId(tournament.getId());
-        if(registeredTeams.size()%2==1){
+        if (registeredTeams.size() % 2 == 1) {
             throw new IllegalStateException("Team count of round robin tournament must be odd number");
         }
         List<Match> matches = generateRoundRobinMatches(tournament, registeredTeams);
-        List<Integer> teamIds=tournamentTeamRepository.findTeamIdsByTournamentId(tournament.getId());
-        applicationEventPublisher.publishEvent(new TournamentMatchesCreatedEvent(tournament.getId(),teamIds));
+        List<Integer> teamIds = tournamentTeamRepository.findTeamIdsByTournamentId(tournament.getId());
+        applicationEventPublisher.publishEvent(new TournamentMatchesCreatedEvent(tournament.getId(), teamIds));
         matchRepository.saveAll(matches);
-       return matchRepository.findByTournamentId(tournament.getId());
+        return matchRepository.findAllWithTeamsByTournamentId(tournament.getId());
     }
 
     private List<Match> generateRoundRobinMatches(Tournament tournament, List<Team> teams) {
@@ -62,7 +62,7 @@ public class RoundRobinFixtureGenerator implements FixtureGeneratorStrategy {
                 match.setHomeTeam(homeTeam);
                 match.setAwayTeam(awayTeam);
                 match.setTournament(tournament);
-                match.setRoundNumber(round+1);
+                match.setRoundNumber(round + 1);
                 matches.add(match);
             }
 

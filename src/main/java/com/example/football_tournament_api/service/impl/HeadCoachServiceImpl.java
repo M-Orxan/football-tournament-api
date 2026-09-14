@@ -22,52 +22,47 @@ public class HeadCoachServiceImpl implements HeadCoachService {
     private final HeadCoachRepository headCoachRepository;
     private final HeadCoachMapper headCoachMapper;
     private final TeamRepository teamRepository;
+
     @Override
     @Transactional
     public HeadCoachResponse create(HeadCoachCreateRequest request) {
-        if(headCoachRepository.existsByName(request.name())){
-            throw  new AlreadyExistsException("This coach already exists");
+        if (headCoachRepository.existsByName(request.name())) {
+            throw new AlreadyExistsException("This coach already exists");
         }
-        HeadCoach headCoach=headCoachMapper.toHeadCoach(request);
-        HeadCoach savedHeadCoach=headCoachRepository.save(headCoach);
-        HeadCoachResponse response=headCoachMapper.toHeadCoachResponse(savedHeadCoach);
+        HeadCoach headCoach = headCoachMapper.toHeadCoach(request);
+        HeadCoach savedHeadCoach = headCoachRepository.save(headCoach);
+        HeadCoachResponse response = headCoachMapper.toHeadCoachResponse(savedHeadCoach);
         return response;
     }
 
     @Override
     public List<HeadCoachResponse> getAll() {
-       List<HeadCoach> headCoaches= headCoachRepository.findAll();
+        List<HeadCoach> headCoaches = headCoachRepository.findAll();
         return headCoachMapper.toHeadCoachResponseList(headCoaches);
     }
 
     @Override
     public HeadCoachResponse update(HeadCoachUpdateRequest request, Integer id) {
-        HeadCoach headCoach=headCoachRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Head coach not found"));
+        HeadCoach headCoach = headCoachRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Head coach not found"));
 
-        if(headCoachRepository.existsByName(request.name())&&!headCoach.getName().equals(request.name())){
-            throw new AlreadyExistsException("This head coach already exists");
-        }
-
-        headCoachMapper.updateEntityFromRequest(request,headCoach);
-
+        headCoachMapper.updateEntityFromRequest(request, headCoach);
         headCoachRepository.save(headCoach);
-
         return headCoachMapper.toHeadCoachResponse(headCoach);
     }
 
     @Override
     public HeadCoachResponse getById(Integer id) {
-        HeadCoach headCoach=headCoachRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Head coach not found"));
+        HeadCoach headCoach = headCoachRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Head coach not found"));
         return headCoachMapper.toHeadCoachResponse(headCoach);
     }
 
     @Override
     @Transactional
     public void delete(Integer id) {
-        HeadCoach headCoach=headCoachRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Head coach not found"));
+        HeadCoach headCoach = headCoachRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Head coach not found"));
 
 
         headCoachRepository.delete(headCoach);

@@ -8,8 +8,6 @@ public record UpdateMatchScoreRequest(
 
         @NotNull(message = "Home team score is required")
         @PositiveOrZero(message = "Invalid score")
-
-
         Integer homeTeamScore,
         @NotNull(message = "Away team score is required")
         @PositiveOrZero(message = "Invalid score")

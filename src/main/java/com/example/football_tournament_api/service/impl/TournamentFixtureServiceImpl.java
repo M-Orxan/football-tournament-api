@@ -6,14 +6,11 @@ import com.example.football_tournament_api.entity.Tournament;
 import com.example.football_tournament_api.enums.TournamentType;
 import com.example.football_tournament_api.exception.ResourceNotFoundException;
 import com.example.football_tournament_api.mapper.MatchMapper;
-import com.example.football_tournament_api.repository.MatchRepository;
 import com.example.football_tournament_api.repository.TournamentRepository;
-import com.example.football_tournament_api.repository.TournamentTeamRepository;
 import com.example.football_tournament_api.service.FixtureGeneratorStrategy;
 import com.example.football_tournament_api.service.TournamentFixtureService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

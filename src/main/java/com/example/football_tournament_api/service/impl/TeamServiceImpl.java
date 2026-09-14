@@ -30,23 +30,17 @@ public class TeamServiceImpl implements TeamService {
     @Override
     @Transactional
     public TeamResponse create(TeamCreateRequest request) {
-        if(teamRepository.existsByName(request.name())){
-            throw new AlreadyExistsException("This team exists");
-        }
 
 
         HeadCoach headCoach=headCoachRepository.findById(request.headCoachId())
                 .orElseThrow(()->new ResourceNotFoundException("Head Coach Not Found"));
 
-        if(teamRepository.existsByHeadCoachId(request.headCoachId())){
-            throw new AlreadyExistsException("This head coach already assigned to other team");
-        }
+
         Team team=teamMapper.toTeam(request) ;
         team.setCreatedAt(LocalDateTime.now());
         team.setHeadCoach(headCoach);
         Team savedTeam=teamRepository.save(team);
         TeamResponse response=  teamRepository.findTeamWithPlayerCountById(savedTeam.getId()).get();
-        //TeamResponse response=teamMapper.toResponse(savedTeam);
         return response;
     }
 
@@ -61,11 +55,7 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public TeamResponse update(TeamUpdateRequest request, Integer id) {
         Team team=teamRepository.findById(id)
-                .orElseThrow(()->new AlreadyExistsException("This team exists"));
-
-        if(teamRepository.existsByName(request.name())&&!team.getName().equals(request.name())){
-            throw new AlreadyExistsException("This team exists");
-        }
+                .orElseThrow(()->new ResourceNotFoundException("Team not found"));
 
 
         if(request.headCoachId()!=null){
@@ -76,8 +66,7 @@ public class TeamServiceImpl implements TeamService {
         }
         teamMapper.updateEntityFromRequest(request,team);
         teamRepository.save(team);
-        TeamResponse response=teamMapper.toResponse(team);
-        return response;
+        return teamMapper.toResponse(team);
     }
 
     @Override

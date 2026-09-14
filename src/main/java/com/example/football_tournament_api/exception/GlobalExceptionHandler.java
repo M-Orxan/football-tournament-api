@@ -3,6 +3,7 @@ package com.example.football_tournament_api.exception;
 
 import com.example.football_tournament_api.dto.error.ErrorResponse;
 import com.example.football_tournament_api.dto.error.ValidationError;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,8 +14,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import javax.management.BadAttributeValueExpException;
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -134,7 +137,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "Invalid stat type or sort order. Allowed stat types are:[CLEAN_SHEETS, GOALS_SCORED, GOALS_CONCEDED, POINTS, WON, LOST, DRAWN, GOAL_DIFFERENCE, PLAYED] Sort order:[MAX, MIN, AVERAGE]",
+                "Invalid stat type or sort order. Allowed stat types are:[CLEAN_SHEETS, GOALS_SCORED, GOALS_CONCEDED, POINTS, WON, LOST, DRAWN, GOAL_DIFFERENCE, PLAYED] Sort order:[MAX, MIN]",
                 null
         );
 
@@ -168,5 +171,34 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    private final Map<String, String> constraintMessageMap = Map.of(
+            "idx_head_coaches_name_active", "This head coach already exists.",
+            "idx_players_email_active", "This player email is already in use.",
+            "idx_teams_name_active", "This team already exists",
+            "idx_head_coach_id_active","This head coach already assigned to other team"
+    );
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException( DataIntegrityViolationException exception) {
+
+        String rootMessage=exception.getMostSpecificCause().getMessage();
+        String errorMessage="Data integrity violation occurred";
+        for (Map.Entry<String, String> entry : constraintMessageMap.entrySet()) {
+            if (rootMessage != null && rootMessage.contains(entry.getKey())) {
+                errorMessage = entry.getValue();
+                break;
+            }
+        }
+        ErrorResponse response=new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+              // exception.getMessage(),
+                errorMessage,
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }
