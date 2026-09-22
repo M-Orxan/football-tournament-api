@@ -17,8 +17,6 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE head_coaches SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE id=?")
 
 public class HeadCoach extends BaseEntity {
-
     @Column(nullable = false)
     private String name;
-
 }

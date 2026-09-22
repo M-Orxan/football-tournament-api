@@ -42,6 +42,7 @@ public class HeadCoachServiceImpl implements HeadCoachService {
     }
 
     @Override
+    @Transactional
     public HeadCoachResponse update(HeadCoachUpdateRequest request, Integer id) {
         HeadCoach headCoach = headCoachRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Head coach not found"));
@@ -63,8 +64,6 @@ public class HeadCoachServiceImpl implements HeadCoachService {
     public void delete(Integer id) {
         HeadCoach headCoach = headCoachRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Head coach not found"));
-
-
         headCoachRepository.delete(headCoach);
         teamRepository.unAssignTeamFromHeadCoach(id);
     }
