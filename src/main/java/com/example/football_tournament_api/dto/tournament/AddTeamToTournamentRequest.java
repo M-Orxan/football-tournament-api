@@ -12,6 +12,5 @@ public record AddTeamToTournamentRequest(
         @NotNull(message = "Team ID is required")
         @Positive(message = "Team ID mus be positive number")
         Integer teamId
-
 ) {
 }

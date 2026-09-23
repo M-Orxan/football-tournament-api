@@ -26,12 +26,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAlreadyExistsException(AlreadyExistsException exception){
         ErrorResponse response=new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
                 exception.getMessage(),
                 null
         );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -64,8 +64,7 @@ public class GlobalExceptionHandler {
                 "Validation failed",
                 validationErrors
         );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 

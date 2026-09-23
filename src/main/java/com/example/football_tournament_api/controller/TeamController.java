@@ -40,7 +40,7 @@ public class TeamController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TeamResponse> update(@Valid @RequestBody(required = false) TeamUpdateRequest request, @PathVariable Integer id){
+    public ResponseEntity<TeamResponse> update(@Valid @RequestBody(required = false ) TeamUpdateRequest request, @PathVariable Integer id){
         return ResponseEntity.ok(teamService.update(request,id));
     }
 

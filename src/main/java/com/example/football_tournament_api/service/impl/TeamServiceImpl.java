@@ -30,38 +30,35 @@ public class TeamServiceImpl implements TeamService {
     @Override
     @Transactional
     public TeamResponse create(TeamCreateRequest request) {
-
-
+        if (teamRepository.existsByName(request.name())) {
+            throw new AlreadyExistsException("Team with this name already exists: " + request.name());
+        }
         HeadCoach headCoach=headCoachRepository.findById(request.headCoachId())
                 .orElseThrow(()->new ResourceNotFoundException("Head Coach Not Found"));
 
-
         Team team=teamMapper.toTeam(request) ;
-        team.setCreatedAt(LocalDateTime.now());
         team.setHeadCoach(headCoach);
         Team savedTeam=teamRepository.save(team);
-        TeamResponse response=  teamRepository.findTeamWithPlayerCountById(savedTeam.getId()).get();
+        TeamResponse response=  teamMapper.toResponse(savedTeam);
         return response;
     }
 
     @Override
     @Transactional
     public List<TeamResponse> getAll() {
-
         return teamRepository.findTeamsWithPlayerCount();
     }
 
     @Override
     @Transactional
     public TeamResponse update(TeamUpdateRequest request, Integer id) {
+
         Team team=teamRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Team not found"));
-
 
         if(request.headCoachId()!=null){
            HeadCoach headCoach=headCoachRepository.findById(request.headCoachId())
                     .orElseThrow(()->new ResourceNotFoundException("Head coach not found"));
-
            team.setHeadCoach(headCoach);
         }
         teamMapper.updateEntityFromRequest(request,team);

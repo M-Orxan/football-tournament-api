@@ -26,10 +26,10 @@ public class BaseEntity {
     LocalDateTime createdAt=LocalDateTime.now();
 
     @Column(name = "deleted_at",nullable = false)
-    LocalDateTime deletedAt;
+    LocalDateTime deletedAt=LocalDateTime.now();
 
     @Column(name = "updated_at",nullable = false,updatable = false)
     @LastModifiedDate
-    LocalDateTime updatedAt;
+    LocalDateTime updatedAt=LocalDateTime.now();
 
 }

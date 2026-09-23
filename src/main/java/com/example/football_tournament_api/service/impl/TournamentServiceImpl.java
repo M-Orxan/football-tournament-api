@@ -74,8 +74,6 @@ public class TournamentServiceImpl implements TournamentService {
             throw new IllegalStateException("Team is already registered to this tournament: "+request.teamId());
         }
 
-
-
         TournamentTeam tournamentTeam = tournamentTeamMapper.toTournamentTeam(tournament, team);
         TournamentTeam savedTournamentTeam = tournamentTeamRepository.save(tournamentTeam);
     }
