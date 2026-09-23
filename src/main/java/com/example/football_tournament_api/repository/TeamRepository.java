@@ -58,9 +58,4 @@ public interface TeamRepository extends JpaRepository<Team,Integer> {
     @Query("Update Team t set t.headCoach.id=null where t.headCoach.id=:headCoachId")
     void unAssignTeamFromHeadCoach(@Param("headCoachId") Integer headCoachId);//head coach soft delete edildikden sonra
 
-
-
-
-
-
 }

@@ -5,11 +5,9 @@ import java.time.LocalDateTime;
 public record PlayerResponse(
         Integer id,
         String name,
-        boolean deleted,
         Integer teamId,
         String teamName,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        LocalDateTime deletedAt
+        LocalDateTime updatedAt
 ) {
 }

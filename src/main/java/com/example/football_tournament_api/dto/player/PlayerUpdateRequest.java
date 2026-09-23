@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 public record PlayerUpdateRequest(
 
         String name,
-
-
         Integer teamId
 ) {
 }
