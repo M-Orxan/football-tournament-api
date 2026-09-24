@@ -17,7 +17,7 @@ public interface MatchService {
 
     List<MatchResponse> simulateAllMatchesByTournament(Integer tournamentId);
 
-    public List<MatchResponse> getMatchesByTeam(Integer tournamentId,Integer teamId);
+    public List<MatchResponse> getMatchesByTeamIdAndTournamentId(Integer tournamentId,Integer teamId);
 
 
 }

@@ -2,6 +2,8 @@ package com.example.football_tournament_api.entity;
 
 
 import com.example.football_tournament_api.enums.MatchStatus;
+import com.example.football_tournament_api.enums.TournamentType;
+import com.example.football_tournament_api.exception.InvalidMatchScoreException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,4 +42,22 @@ public class Match {
     @Column(nullable = false)
     private int roundNumber;
     private int winnerTeamId;
+
+
+    public void finishMatch(Integer homeScore, Integer awayScore) {
+        if (homeScore == null || awayScore == null) {
+            throw new IllegalArgumentException("Match scores cannot be null");
+        }
+
+        if (this.tournament.getType() == TournamentType.SingleElimination && homeScore.equals(awayScore)) {
+            throw new InvalidMatchScoreException("Invalid score. Can't be draw in single elimination");
+        }
+
+        if (homeScore > awayScore) {
+            this.winnerTeamId = this.homeTeam.getId();
+        } else if (awayScore > homeScore) {
+            this.winnerTeamId = this.awayTeam.getId();
+        }
+        this.status = MatchStatus.Finished;
+    }
 }

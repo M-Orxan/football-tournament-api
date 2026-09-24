@@ -49,16 +49,8 @@ public class MatchServiceImpl implements MatchService {
             }
         }
 
-        if ((request.homeTeamScore().equals(request.awayTeamScore()) &&
-                match.getTournament().getType() == TournamentType.SingleElimination)) {
-            throw new InvalidMatchScoreException("Invalid score. Can't be draw");
-        } else if (request.homeTeamScore() > request.awayTeamScore()) {
-            match.setWinnerTeamId(match.getHomeTeam().getId());
-        } else if (request.awayTeamScore() > request.homeTeamScore()) {
-            match.setWinnerTeamId(match.getAwayTeam().getId());
-        }
-        match.setStatus(MatchStatus.Finished);
         matchMapper.updateMatchScore(request, match);
+        match.finishMatch(request.homeTeamScore(), request.awayTeamScore());
 
         TournamentType type = match.getTournament().getType();
         MatchResultProcessor processor = matchResultProcessorFactory.getProcessor(type);
@@ -70,25 +62,22 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public List<MatchResponse> getMatchesByTournamentId(Integer tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Tournament not found"));
-
-        if (!matchRepository.existsByTournamentId(tournamentId)) {
-            throw new ResourceNotFoundException("Matches have not still been generated for this tournament");
-        }
 
         List<Match> matches = matchRepository.findAllWithTeamsByTournamentId(tournamentId);
-        List<MatchResponse> response = matchMapper.toMatchResponseList(matches);
-        return response;
+        if (matches.isEmpty()) {
+            if (!tournamentRepository.existsById(tournamentId)) {
+                throw new ResourceNotFoundException("Tournament not found");
+            }
+            throw new ResourceNotFoundException("Matches have not still been generated for this tournament");
+        }
+        return matchMapper.toMatchResponseList(matches);
     }
 
     @Override
     public MatchResponse getMatchById(Integer matchId) {
         Match match = matchRepository.findMatchWithTeamsById(matchId)
                 .orElseThrow(() -> new ResourceNotFoundException("Match not found"));
-
         return matchMapper.toMatchResponse(match);
-
     }
 
     @Override
@@ -116,17 +105,13 @@ public class MatchServiceImpl implements MatchService {
             responses.add(updateMatchScore(match.getId(), request));
 
         }
-
         return responses;
-
-
     }
 
 
-@Override
-@Transactional
+    @Override
+    @Transactional
     public List<MatchResponse> simulateAllMatchesByTournament(Integer tournamentId) {
-
         List<Match> matches = matchRepository.findAllWithTeamsByTournamentId(tournamentId);
         List<MatchResponse> responses = new ArrayList<>();
 
@@ -148,27 +133,25 @@ public class MatchServiceImpl implements MatchService {
             responses.add(updateMatchScore(match.getId(), request));
 
         }
-
         return responses;
-
-
     }
-
 
 
     @Transactional
     @Override
-    public List<MatchResponse> getMatchesByTeam(Integer tournamentId,Integer teamId) {
+    public List<MatchResponse> getMatchesByTeamIdAndTournamentId(Integer tournamentId, Integer teamId) {
 
-        if(!tournamentRepository.existsById(tournamentId)){
-            throw new ResourceNotFoundException("Tournament not found");
+        List<Match> matches = matchRepository.findByTournamentIdAndTeamId(tournamentId, teamId);
+
+        if (matches.isEmpty()) {
+            if (!tournamentRepository.existsById(tournamentId)) {
+                throw new ResourceNotFoundException("Tournament not found");
+            }
+            if (!teamRepository.existsById(teamId)) {
+                throw new ResourceNotFoundException("Team not found");
+            }
         }
-        if(!teamRepository.existsById(teamId)){
-            throw new ResourceNotFoundException("Team not found");
-        }
-        List<Match> matches=matchRepository.findByTournamentIdAndTeamId(tournamentId,teamId);
 
         return matchMapper.toMatchResponseList(matches);
-
     }
 }

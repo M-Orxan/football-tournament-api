@@ -7,6 +7,7 @@ import com.example.football_tournament_api.dto.tournament.TournamentUpdateReques
 import com.example.football_tournament_api.entity.Team;
 import com.example.football_tournament_api.entity.Tournament;
 import com.example.football_tournament_api.entity.TournamentTeam;
+import com.example.football_tournament_api.exception.AlreadyExistsException;
 import com.example.football_tournament_api.exception.ResourceNotFoundException;
 import com.example.football_tournament_api.mapper.TournamentMapper;
 import com.example.football_tournament_api.mapper.TournamentTeamMapper;
@@ -71,7 +72,7 @@ public class TournamentServiceImpl implements TournamentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Team not found: "+request.teamId()));
         boolean isRegistered = tournamentTeamRepository.existsByTournamentIdAndTeamId(request.tournamentId(), request.teamId());
         if (isRegistered) {
-            throw new IllegalStateException("Team is already registered to this tournament: "+request.teamId());
+            throw new AlreadyExistsException("Team is already registered to this tournament: "+request.teamId());
         }
 
         TournamentTeam tournamentTeam = tournamentTeamMapper.toTournamentTeam(tournament, team);

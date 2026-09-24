@@ -48,7 +48,7 @@ public class MatchController {
 
     @GetMapping("{tournamentId}/{teamId}/matches")
     public ResponseEntity< List< MatchResponse>> getById(@PathVariable Integer tournamentId,@PathVariable Integer teamId){
-       List< MatchResponse> response=matchService.getMatchesByTeam(tournamentId,teamId);
+       List< MatchResponse> response=matchService.getMatchesByTeamIdAndTournamentId(tournamentId,teamId);
         return ResponseEntity.ok().body(response);
     }
 
