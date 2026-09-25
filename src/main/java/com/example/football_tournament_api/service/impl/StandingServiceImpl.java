@@ -41,7 +41,6 @@ public class StandingServiceImpl implements StandingService {
     @Transactional
 
     public void onMatchFinished(MatchFinishedEvent event) {
-
         recalculateTournamentStandings(event.tournamentId());
     }
 
@@ -78,13 +77,13 @@ public class StandingServiceImpl implements StandingService {
     @Transactional
     public void recalculateTournamentStandings(Integer tournamentId){
         List<Standing> standings=standingRepository
-                .findAllByTournamentIdOrderByPointsDescGoalDifferenceDescGoalsForDesc(tournamentId);
+                .findAllByTournamentId(tournamentId);
 
         List<Match> finishedMatches=matchRepository
                 .findByTournamentIdAndStatus(tournamentId,MatchStatus.Finished);
 
         for(Standing standing:standings){
-            resetStanding(standing);
+            standing.reset();
         }
 
         Map<Integer, Standing> standingMap = standings.stream()
@@ -93,55 +92,9 @@ public class StandingServiceImpl implements StandingService {
         for(Match match:finishedMatches){
             Standing homeTeamStanding=standingMap.get(match.getHomeTeam().getId());
             Standing awayTeamStanding=standingMap.get(match.getAwayTeam().getId());
-            if(match.getHomeTeamScore()>match.getAwayTeamScore()){
-                homeTeamStanding.setWon(homeTeamStanding.getWon()+1);
-                awayTeamStanding.setLost(awayTeamStanding.getLost()+1);
-                homeTeamStanding.setPoints(homeTeamStanding.getPoints()+3);
-            }else if(match.getAwayTeamScore()>match.getHomeTeamScore()){
-                awayTeamStanding.setWon(awayTeamStanding.getWon()+1);
-                homeTeamStanding.setLost(homeTeamStanding.getLost()+1);
-                awayTeamStanding.setPoints(awayTeamStanding.getPoints()+3);
-            }
-            else{
-                homeTeamStanding.setDrawn(homeTeamStanding.getDrawn()+1);
-                awayTeamStanding.setDrawn(awayTeamStanding.getDrawn()+1);
-                homeTeamStanding.setPoints(homeTeamStanding.getPoints()+1);
-                awayTeamStanding.setPoints(awayTeamStanding.getPoints()+1);
-            }
 
-            if(match.getHomeTeamScore()==0){
-                awayTeamStanding.setCleanSheet(awayTeamStanding.getCleanSheet()+1);
-            }
-
-            if(match.getAwayTeamScore()==0){
-                homeTeamStanding.setCleanSheet(homeTeamStanding.getCleanSheet()+1);
-            }
-
-            homeTeamStanding.setGoalsFor(homeTeamStanding.getGoalsFor()+match.getHomeTeamScore());
-            homeTeamStanding.setGoalsAgainst(homeTeamStanding.getGoalsAgainst()+match.getAwayTeamScore());
-            homeTeamStanding.setGoalDifference(homeTeamStanding.getGoalsFor()- homeTeamStanding.getGoalsAgainst());
-            homeTeamStanding.setPlayed(homeTeamStanding.getPlayed()+1);
-
-            awayTeamStanding.setGoalsFor(awayTeamStanding.getGoalsFor()+match.getAwayTeamScore());
-            awayTeamStanding.setGoalsAgainst(awayTeamStanding.getGoalsAgainst()+match.getHomeTeamScore());
-            awayTeamStanding.setGoalDifference(awayTeamStanding.getGoalsFor()- awayTeamStanding.getGoalsAgainst());
-            awayTeamStanding.setPlayed(awayTeamStanding.getPlayed()+1);
+            homeTeamStanding.applyMatchResult(match.getHomeTeamScore(),match.getAwayTeamScore());
+            awayTeamStanding.applyMatchResult(match.getAwayTeamScore(),match.getHomeTeamScore());
         }
     }
-
-    private void resetStanding(Standing standing) {
-        standing.setPlayed(0);
-        standing.setWon(0);
-        standing.setDrawn(0);
-        standing.setLost(0);
-        standing.setGoalsFor(0);
-        standing.setGoalsAgainst(0);
-        standing.setGoalDifference(0);
-        standing.setPoints(0);
-        standing.setCleanSheet(0);
-    }
-
-
-
-
 }

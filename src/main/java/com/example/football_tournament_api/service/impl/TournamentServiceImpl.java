@@ -35,7 +35,6 @@ public class TournamentServiceImpl implements TournamentService {
             throw new ResourceNotFoundException("This tournament already exists: "+request.name());
         }
 
-        //if(request.type().)
         Tournament tournament=tournamentMapper.toEntity(request);
         Tournament savedTournament=tournamentRepository.save(tournament);
 

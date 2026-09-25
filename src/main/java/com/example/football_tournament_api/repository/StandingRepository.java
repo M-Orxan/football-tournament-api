@@ -15,8 +15,9 @@ public interface StandingRepository extends JpaRepository<Standing,Integer> {
     Optional<Standing> findByTournamentAndTeam(@Param("tournamentId")Integer tournamentId, @Param("teamId") Integer teamId);
 
     boolean existsByTournamentId(Integer tournamentId);
-
-
+    
     List<Standing> findAllByTournamentIdOrderByPointsDescGoalDifferenceDescGoalsForDesc(Integer tournamentId);
+
+    List<Standing> findAllByTournamentId(Integer tournamentId);
 
 }
