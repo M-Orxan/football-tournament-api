@@ -48,15 +48,15 @@ public class StandingServiceImpl implements StandingService {
     @EventListener
     public void onTournamentMatchesCreated(TournamentMatchesCreatedEvent event) {
 
-        if(standingRepository.existsByTournamentId(event.tournamentId())){
+        if (standingRepository.existsByTournamentId(event.tournamentId())) {
             throw new IllegalStateException("Standing for this tournament is already initialized.");
         }
 
-        Tournament tournamentProxy=tournamentRepository.getReferenceById(event.tournamentId());
-        List<Standing> standingsToBeSaved=new ArrayList<>();
-        for(Integer teamId:event.teamIds()){
-            Team teamProxy=teamRepository.getReferenceById(teamId);
-            Standing standing=new Standing();
+        Tournament tournamentProxy = tournamentRepository.getReferenceById(event.tournamentId());
+        List<Standing> standingsToBeSaved = new ArrayList<>();
+        for (Integer teamId : event.teamIds()) {
+            Team teamProxy = teamRepository.getReferenceById(teamId);
+            Standing standing = new Standing();
             standing.setTournament(tournamentProxy);
             standing.setTeam(teamProxy);
             standingsToBeSaved.add(standing);
@@ -66,35 +66,34 @@ public class StandingServiceImpl implements StandingService {
 
     @Override
     public List<StandingResponse> getAll(Integer tournamentId) {
-        List<Standing> standings=standingRepository.findAllByTournamentIdOrderByPointsDescGoalDifferenceDescGoalsForDesc(tournamentId);
+        List<Standing> standings = standingRepository.findAllByTournamentIdOrderByPointsDescGoalDifferenceDescGoalsForDesc(tournamentId);
 
         return standingMapper.toResponse(standings);
     }
 
 
-
     @Override
     @Transactional
-    public void recalculateTournamentStandings(Integer tournamentId){
-        List<Standing> standings=standingRepository
+    public void recalculateTournamentStandings(Integer tournamentId) {
+        List<Standing> standings = standingRepository
                 .findAllByTournamentId(tournamentId);
 
-        List<Match> finishedMatches=matchRepository
-                .findByTournamentIdAndStatus(tournamentId,MatchStatus.Finished);
+        List<Match> finishedMatches = matchRepository
+                .findByTournamentIdAndStatus(tournamentId, MatchStatus.Finished);
 
-        for(Standing standing:standings){
+        for (Standing standing : standings) {
             standing.reset();
         }
 
         Map<Integer, Standing> standingMap = standings.stream()
                 .collect(Collectors.toMap(s -> s.getTeam().getId(), s -> s));
 
-        for(Match match:finishedMatches){
-            Standing homeTeamStanding=standingMap.get(match.getHomeTeam().getId());
-            Standing awayTeamStanding=standingMap.get(match.getAwayTeam().getId());
+        for (Match match : finishedMatches) {
+            Standing homeTeamStanding = standingMap.get(match.getHomeTeam().getId());
+            Standing awayTeamStanding = standingMap.get(match.getAwayTeam().getId());
 
-            homeTeamStanding.applyMatchResult(match.getHomeTeamScore(),match.getAwayTeamScore());
-            awayTeamStanding.applyMatchResult(match.getAwayTeamScore(),match.getHomeTeamScore());
+            homeTeamStanding.applyMatchResult(match.getHomeTeamScore(), match.getAwayTeamScore());
+            awayTeamStanding.applyMatchResult(match.getAwayTeamScore(), match.getHomeTeamScore());
         }
     }
 }
