@@ -88,13 +88,13 @@ public class MatchServiceImpl implements MatchService {
         List<MatchResponse> responses = new ArrayList<>();
 
         for (Match match : matches) {
-            int homeTeamScore = ThreadLocalRandom.current().nextInt(0, 5);
-            int awayTeamScore = ThreadLocalRandom.current().nextInt(0, 5);
+            int homeTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+            int awayTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
 
             if (match.getTournament().getType() == TournamentType.SingleElimination) {
                 while (homeTeamScore == awayTeamScore) {
-                    homeTeamScore = ThreadLocalRandom.current().nextInt(0, 5);
-                    awayTeamScore = ThreadLocalRandom.current().nextInt(0, 5);
+                    homeTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
+                    awayTeamScore = ThreadLocalRandom.current().nextInt(0, 4);
                 }
             }
             UpdateMatchScoreRequest request = new UpdateMatchScoreRequest(
